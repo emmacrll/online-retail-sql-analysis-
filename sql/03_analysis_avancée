@@ -1,0 +1,80 @@
+-- 1. CTE : CA cumulé par mois
+WITH ca_mensuel AS (
+    SELECT
+        DATE_TRUNC('month', invoicedate) AS mois,
+        ROUND(SUM(revenue)::NUMERIC, 2)  AS ca_mensuel
+    FROM online_retail_clean
+    GROUP BY DATE_TRUNC('month', invoicedate)
+)
+SELECT
+    mois,
+    ca_mensuel,
+    ROUND(SUM(ca_mensuel) OVER (ORDER BY mois)::NUMERIC, 2) AS ca_cumule
+FROM ca_mensuel
+ORDER BY mois;
+
+
+-- 2. Window function : rang des produits par revenue
+SELECT
+    stockcode,
+    description,
+    ROUND(SUM(revenue)::NUMERIC, 2) AS ca_produit,
+    RANK() OVER (ORDER BY SUM(revenue) DESC) AS rang
+FROM online_retail_clean
+GROUP BY stockcode, description
+ORDER BY rang
+LIMIT 20;
+
+
+-- 3. Window function : part de chaque pays dans le CA total
+SELECT
+    country,
+    ROUND(SUM(revenue)::NUMERIC, 2) AS ca_pays,
+    ROUND(100.0 * SUM(revenue) / SUM(SUM(revenue)) OVER ()::NUMERIC, 2) AS pct_ca_total
+FROM online_retail_clean
+GROUP BY country
+ORDER BY ca_pays DESC;
+
+
+-- 4. CTE : cohortes clients par premier mois d'achat
+WITH premier_achat AS (
+    SELECT
+        customerid,
+        DATE_TRUNC('month', MIN(invoicedate)) AS cohorte
+    FROM online_retail_clean
+    GROUP BY customerid
+),
+achats AS (
+    SELECT
+        o.customerid,
+        p.cohorte,
+        DATE_TRUNC('month', o.invoicedate) AS mois_achat,
+        ROUND(SUM(o.revenue)::NUMERIC, 2)  AS revenue
+    FROM online_retail_clean o
+    JOIN premier_achat p ON o.customerid = p.customerid
+    GROUP BY o.customerid, p.cohorte, DATE_TRUNC('month', o.invoicedate)
+)
+SELECT
+    cohorte,
+    mois_achat,
+    COUNT(DISTINCT customerid) AS nb_clients_actifs,
+    ROUND(SUM(revenue)::NUMERIC, 2) AS ca_cohorte
+FROM achats
+GROUP BY cohorte, mois_achat
+ORDER BY cohorte, mois_achat;
+
+-- 5. Taux de rétention : clients ayant commandé plus d'une fois
+WITH commandes_par_client AS (
+    SELECT
+        customerid,
+        COUNT(DISTINCT invoiceno) AS nb_commandes
+    FROM online_retail_clean
+    GROUP BY customerid
+)
+SELECT
+    ROUND(100.0 * COUNT(CASE WHEN nb_commandes > 1 THEN 1 END) / COUNT(*)::NUMERIC, 2) AS taux_retention,
+    COUNT(CASE WHEN nb_commandes = 1 THEN 1 END)  AS clients_one_shot,
+    COUNT(CASE WHEN nb_commandes > 1 THEN 1 END)  AS clients_fideles,
+    COUNT(*)                                        AS total_clients
+FROM commandes_par_client;
+
