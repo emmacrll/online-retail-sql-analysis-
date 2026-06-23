@@ -59,3 +59,15 @@ Avec un taux de rétention de 65,58%, 2 845 clients sur 4 338 ont passé plusieu
 
 L'analyse révèle plusieurs insights intéressants. Premièrement, la forte concentration du CA sur le Royaume-Uni (82%) suggère que l'entreprise pourrait avoir une opportunité de croissance significative à l'international, notamment aux Pays-Bas et en Allemagne qui montrent déjà un potentiel intéressant. Deuxièmement, le pic de novembre confirme une saisonnalité forte liée aux fêtes, ce qui implique une gestion des stocks anticipée dès septembre. Troisièmement, le taux de rétention de 65,58% est un signal positif pour un modèle B2B, mais les 1 493 clients one-shot représentent une opportunité de réengagement non négligeable. Enfin, la présence des frais de port dans le top 10 des revenus indique que la logistique représente un coût significatif pour les clients, ce qui pourrait être un levier de fidélisation si optimisé.
 
+7. Structure du projet :
+
+📁 Structure du projet
+
+online-retail-sql-analysis/
+│
+├── README.md
+└── sql/
+    ├── 01_exploration.sql    # Analyse exploratoire du dataset brut
+    ├── 02_cleaning.sql       # Nettoyage et préparation des données
+    └── 03_analysis.sql       # Analyses business (basique, intermédiaire, avancé)
+
