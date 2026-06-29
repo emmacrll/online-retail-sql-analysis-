@@ -1,73 +1,114 @@
 # online-retail-sql-analysis-
-SQL analysis of an e-commerce dataset using PostgreSQL
+# Analyse SQL d’un dataset e-commerce (PostgreSQL)
 
+## Objectif du projet
+Ce projet vise à analyser les données de ventes d’un e-commerce britannique afin d’en extraire des insights business exploitables.
 
-1. Objectif du projet :
-   
-Ce projet a pour objectif d'analyser les données de ventes d'un e-commerce britannique afin d'en extraire des insights business concrets : identification des produits les plus rentables, évolution du chiffre d'affaires dans le temps, comportement des clients et taux de fidélisation. L'ensemble de l'analyse est réalisé en SQL avec PostgreSQL, depuis l'exploration et le nettoyage des données brutes jusqu'aux requêtes analytiques avancées.
+L’objectif est de transformer des données brutes en indicateurs de performance clairs pour comprendre les ventes, les clients et la rentabilité.
 
-2. Dataset :
+---
 
-Dataset public issu de Kaggle, contenant plus de 500 000 transactions d'un grossiste e-commerce britannique entre décembre 2010 et décembre 2011. Chaque ligne représente un article commandé, avec les informations de facturation, produit, quantité, prix unitaire, client et pays. Le dataset présente des caractéristiques réalistes : données manquantes, doublons, commandes annulées et valeurs aberrantes, ce qui en fait un bon support pour un travail de nettoyage complet.
-
-https://www.kaggle.com/datasets/ulrikthygepedersen/online-retail-dataset 
-
-3. Stack technique :
-
-Pour ce projet j'ai choisi d'utiliser PostgreSQL comme base de données relationnelle, déployé via Docker afin de garantir un environnement isolé et reproductible, ce qui correspond aux pratiques utilisées en entreprise. L'administration de la base et l'exécution des requêtes ont été réalisées via pgAdmin, une interface graphique qui permet de visualiser facilement la structure des tables et les résultats des requêtes.
+## Stack technique
 - PostgreSQL 16
-- Docker 27
-- pgAdmin 4
+- SQL (CTE, window functions, jointures)
+- Docker (environnement reproductible)
+- pgAdmin (gestion et visualisation de la base de données)
 
-4. Démarche :
-   
-a) Exploration des données :
+---
 
-Avant de toucher aux données, j'ai commencé par une phase d'exploration complète pour comprendre la structure du dataset et identifier les problèmes : valeurs manquantes, doublons, valeurs aberrantes, commandes annulées et codes produits bizarres. Cette étape est essentielle pour nettoyer les données de manière réfléchie plutôt qu'aveugle.
+## Dataset
+- Dataset public Kaggle (500 000+ transactions)
+- E-commerce britannique (2010–2011)
+- Données réelles avec anomalies : valeurs manquantes, annulations, doublons
 
-b) Nettoyage des données :
+---
 
-Afin de préserver les données brutes, j'ai créé une copie de la table originale sur laquelle j'ai appliqué toutes les transformations. Les étapes de nettoyage incluent la suppression des doublons, l'isolation des commandes annulées dans une table séparée, la suppression des lignes sans identifiant client, la suppression des prix et quantités aberrants, et enfin la création d'une colonne revenue calculée.
+## Démarche du projet
 
-c) Analyse :
+### 1. Exploration des données
+Analyse de la structure du dataset afin d’identifier les problématiques de qualité des données :
+- valeurs manquantes
+- doublons
+- commandes annulées
+- valeurs aberrantes
 
-L'analyse est structurée en trois niveaux de complexité croissante : des indicateurs globaux (chiffre d'affaires, panier moyen, nombre de clients), des analyses par dimension (top produits, CA par mois, CA par pays), et des requêtes avancées utilisant des CTEs et window functions pour analyser les cohortes clients et le taux de rétention.
+---
 
-5. Résultats clés :
+### 2. Nettoyage des données
+Préparation des données pour l’analyse :
+- suppression des doublons
+- gestion des commandes annulées
+- suppression des lignes sans client
+- traitement des valeurs aberrantes
+- création d’une métrique de revenu
 
-- Indicateurs globaux :
+---
 
-Le dataset nettoyé contient 18 532 commandes pour un chiffre d'affaires total de 8 886 657 £, réalisé auprès de 4 338 clients uniques sur 3 665 produits différents. Le panier moyen par commande s'élève à 479 £, ce qui confirme le profil grossiste B2B du dataset.
+### 3. Analyse des données
+Analyse structurée en plusieurs niveaux :
+- indicateurs globaux (CA, panier moyen, clients)
+- analyse par produit, pays et période
+- analyses avancées avec CTE et window functions
+- analyse de cohorte et rétention client
 
-- Produits :
-  
-Le produit le plus rentable est le "Paper Craft Little Birdie" avec 168 469 £ de CA et 80 995 unités vendues. Les frais de port apparaissent en 6ème position, ce qui reflète des commandes en grandes quantités typiques d'un modèle B2B.
+---
 
-- Tendance mensuelle :
-  
-Le CA suit une tendance croissante tout au long de l'année avec un pic marqué en novembre 2011 à 1 155 668 £, typique d'un grossiste qui prépare les stocks pour les fêtes de fin d'année. Décembre apparaît en baisse car le dataset ne couvre que les premiers jours du mois.
+## 📈 Résultats clés
 
-- Répartition géographique :
-  
-Le Royaume-Uni représente 81,97% du CA total avec 7 284 472 £. Les Pays-Bas arrivent en 2ème position avec 3,21%, suivis de l'Irlande et de l'Allemagne.
+### Indicateurs globaux
+- 8,8M £ de chiffre d’affaires
+- 18 532 commandes
+- 4 338 clients uniques
+- 3 665 produits
+- panier moyen : 479 £
 
-- Fidélisation clients :
-  
-Avec un taux de rétention de 65,58%, 2 845 clients sur 4 338 ont passé plusieurs commandes, ce qui témoigne d'une bonne fidélité clientèle typique d'un modèle B2B.
+---
 
-6.  Insights business :
+### Produits
+- produit le plus performant : *Paper Craft Little Birdie*
+- forte concentration des revenus sur quelques produits clés
+- importance des frais logistiques dans les ventes
 
-L'analyse révèle plusieurs insights intéressants. Premièrement, la forte concentration du CA sur le Royaume-Uni (82%) suggère que l'entreprise pourrait avoir une opportunité de croissance significative à l'international, notamment aux Pays-Bas et en Allemagne qui montrent déjà un potentiel intéressant. Deuxièmement, le pic de novembre confirme une saisonnalité forte liée aux fêtes, ce qui implique une gestion des stocks anticipée dès septembre. Troisièmement, le taux de rétention de 65,58% est un signal positif pour un modèle B2B, mais les 1 493 clients one-shot représentent une opportunité de réengagement non négligeable. Enfin, la présence des frais de port dans le top 10 des revenus indique que la logistique représente un coût significatif pour les clients, ce qui pourrait être un levier de fidélisation si optimisé.
+---
 
-7. Structure du projet :
+### Tendances temporelles
+- croissance globale du chiffre d’affaires sur l’année
+- pic en novembre (effet saisonnier)
+- baisse en décembre (période incomplète du dataset)
 
-📁 Structure du projet
+---
 
-online-retail-sql-analysis/
-│
-├── README.md
-└── sql/
-    ├── 01_exploration.sql    # Analyse exploratoire du dataset brut
-    ├── 02_cleaning.sql       # Nettoyage et préparation des données
-    └── 03_analysis.sql       # Analyses business (basique, intermédiaire, avancé)
+### Répartition géographique
+- Royaume-Uni : ~82% du CA
+- Pays-Bas : 2ème marché principal
+- autres marchés : Irlande, Allemagne
+
+---
+
+### Fidélisation client
+- taux de rétention : 65,58%
+- majorité de clients récurrents (modèle B2B)
+- présence d’un segment de clients one-shot à potentiel de réactivation
+
+---
+
+## Insights business
+- forte dépendance au marché UK → opportunité d’internationalisation
+- saisonnalité marquée → besoin d’anticipation des stocks
+- bonne rétention client mais marge d’amélioration sur les clients occasionnels
+- logistique (frais de port) joue un rôle important dans la structure des revenus
+
+---
+
+## Visualisation des données (Power BI)
+
+Un tableau de bord interactif a été développé sous Power BI afin de visualiser les principaux indicateurs du projet.
+
+Ce dashboard permet de :
+- suivre l’évolution du chiffre d’affaires dans le temps
+- analyser les performances par produit et par pays
+- visualiser les KPI clés (CA, panier moyen, nombre de clients)
+- explorer la répartition des ventes de manière interactive
+
+Cet outil facilite l’interprétation des résultats et la prise de décision basée sur les données.
 
